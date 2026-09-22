@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "project": "mento-cli",
+  "notes": [
+    "Source of truth for the task DAG. Coordinator-owned: no task edits this file.",
+    "A task may change only paths matching its `owned` globs, plus `alwaysAllowed`. `coordinatorOwned` always wins.",
+    "`brief: null` means NOT DISPATCHABLE. Write docs/plan/briefs/<id>.md first (the /skein-brief skill), then set the path here.",
+    "Keep `owned` globs disjoint between tasks that run at the same time; `skein plan` prints overlaps.",
+    "money: true and pii: true make a cross-model review mandatory before merge. `done: true` is set by skein merge.",
+    "This repo is the team's sandbox for running several coordinators at once. CLI-00 is briefed and dispatchable; CLI-01 and CLI-02 are deliberately unbriefed so a new coordinator's first act is to brief one."
+  ],
+  "modelPolicy": {
+    "principle": "The defects that matter are found by cross-model review, whichever model wrote the code. The reviewer is where model strength has the most leverage.",
+    "structure": "at most 6 agents on this repo across all coordinators (maxAgents in .skein/config.json); disjoint file ownership per brief; fix rounds resume the author session rather than starting a fresh agent"
+  },
+  "coordinatorOwned": [
+    "AGENTS.md",
+    ".skein/**",
+    "scripts/skein/**",
+    "docs/plan/**",
+    "scripts/githooks/**",
+    ".github/**",
+    ".superset/**",
+    "bin/**"
+  ],
+  "alwaysAllowed": ["package-lock.json", "docs/adr/DRAFT-*.md"],
+  "tasks": [
+    {
+      "id": "CLI-00",
+      "title": "Test harness: typecheck and test scripts so the gate can judge work",
+      "type": "chore",
+      "slug": "test-harness",
+      "deps": [],
+      "tier": "default",
+      "owned": ["package.json", "tsconfig.json", "vitest.config.ts", "tests/**", ".gitignore"],
+      "accept": ["npm run typecheck", "npm test"],
+      "needs": [],
+      "brief": "docs/plan/briefs/CLI-00.md",
+      "notes": "Phase 0. package.json has only build/dev/prepack, so .skein/config.json standard is `npm run build` until this merges; the coordinator then sets standard to typecheck + test. No product behaviour changes."
+    },
+    {
+      "id": "CLI-01",
+      "title": "README: correct the repository and install instructions",
+      "type": "docs",
+      "slug": "readme-install",
+      "deps": [],
+      "tier": "mechanical",
+      "owned": ["README.md"],
+      "accept": ["npm run build"],
+      "needs": [],
+      "brief": null,
+      "notes": "README.md still says `git clone .../mento-cli.git` and the package was renamed to @mento-protocol/cli in #6. Small, docs-only, no deps: a good first brief for a new coordinator. Check every command block against src/commands while there."
+    },
+    {
+      "id": "CLI-02",
+      "title": "parseAmount rejects malformed amounts with a clear error",
+      "type": "fix",
+      "slug": "parse-amount-validation",
+      "deps": ["CLI-00"],
+      "tier": "default",
+      "owned": ["src/lib/format.ts", "tests/format.test.ts"],
+      "accept": ["npm test -- tests/format.test.ts"],
+      "needs": [],
+      "brief": null,
+      "notes": "src/lib/format.ts parseAmount splits on '.' and calls BigInt(): `1e3`, `abc`, `-1`, `1.2.3` and an empty string either throw a raw SyntaxError (handleError prints it verbatim) or silently produce a wrong bigint. Needs CLI-00's test runner. Pure module, no network: a good second brief."
+    }
+  ]
+}

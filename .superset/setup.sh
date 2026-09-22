@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Workspace setup for mento-cli: runs once per new worktree, in the worktree root, under
+# Superset or the skein local driver (both export SUPERSET_ROOT_PATH). Idempotent; keep it
+# fast. Coordinator-owned (.superset/** in the plan).
+set -euo pipefail
+
+ROOT="${SUPERSET_ROOT_PATH:-}"
+WS_NAME="${SUPERSET_WORKSPACE_NAME:-workspace}"
+[ -n "$ROOT" ] || { echo "SUPERSET_ROOT_PATH not set; run this via Superset or skein." >&2; exit 1; }
+
+# 1. Env files are gitignored. By default a workspace gets only the committed `.env.example`
+#    (names, no secrets): a worker runs with the credentials the repo chose to give it, not
+#    whatever the main checkout holds. A repo that needs real values sets ENV_COPY_REAL=1
+#    and lists in ENV_WITHHOLD (an ERE of variable names) what must still be blanked.
+ENV_COPY_REAL=0
+ENV_WITHHOLD=''
+copy_env() {
+  local rel="$1"
+  if [ -f "$rel" ]; then echo "env: $rel already present"
+  elif [ "$ENV_COPY_REAL" = 1 ] && [ -f "$ROOT/$rel" ]; then
+    mkdir -p "$(dirname "$rel")"
+    if [ -n "$ENV_WITHHOLD" ]; then sed -E "s|^($ENV_WITHHOLD)=.*|\1=  # skein workspace: withheld|" "$ROOT/$rel" > "$rel"; else cp "$ROOT/$rel" "$rel"; fi
+    chmod 600 "$rel"; echo "env: copied $rel from main checkout${ENV_WITHHOLD:+ (withheld: $ENV_WITHHOLD)}"
+  elif [ -f "$rel.example" ]; then cp "$rel.example" "$rel"; echo "env: $rel created from $rel.example"
+  else echo "env: no $rel.example; skipping"; fi
+}
+for f in .env; do copy_env "$f"; done
+
+# 2. The repo's git hooks: scripts/githooks/pre-push refuses a push to main.
+git config core.hooksPath scripts/githooks
+
+# 3. Dependencies.
+npm ci --prefer-offline --no-audit --no-fund
+
+# 4. Project-specific preparation (builds, generated code). Edit freely.
+true
+
+# Readiness marker. skein dispatch waits for this exact line before launching an agent, so a
+# worker never races the install.
+echo "workspace '$WS_NAME' ready"
