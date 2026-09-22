@@ -8,7 +8,7 @@
     "Keep `owned` globs disjoint between tasks that run at the same time; `skein plan` prints overlaps.",
     "money: true and pii: true make a cross-model review mandatory before merge. `done: true` is set by skein merge.",
     "This repo is the team's sandbox for running several coordinators at once. CLI-00 is briefed and dispatchable; CLI-01 and CLI-02 are deliberately unbriefed so a new coordinator's first act is to brief one.",
-    "Tasks CLI-03..CLI-06 are SUGGESTED FEATURES for the team exercise (docs/plan/TRY-IT.md): pick one, brief it with your coordinator, build it. Edit or replace them freely."
+    "Tasks CLI-03..CLI-06 are SUGGESTED FEATURES for the team exercise (SWARM.md): pick one, brief it with your coordinator, build it. Edit or replace them freely."
   ],
   "modelPolicy": {
     "principle": "The defects that matter are found by cross-model review, whichever model wrote the code. The reviewer is where model strength has the most leverage.",

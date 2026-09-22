@@ -1,7 +1,7 @@
 # Joining this project
 
-For a person joining mento-cli with their own machine and their own agents. Read this, then
-`AGENTS.md`, then run `skein status`.
+For a person joining mento-cli with their own machine and their own agents. The team guide is
+`SWARM.md` at the repo root; this page is the generic checklist behind it.
 
 ## 1. Your machine
 - The agent CLIs you use: Claude Code, and Codex if you run cross-model reviews.

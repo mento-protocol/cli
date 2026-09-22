@@ -2,6 +2,9 @@
 
 > CLI for the Mento Protocol — onchain FX infrastructure
 
+> **Team sandbox:** this repo is where we try building with a swarm of coding agents.
+> Start at [SWARM.md](SWARM.md); worker rules are in [AGENTS.md](AGENTS.md).
+
 A command-line interface that wraps [@mento-protocol/mento-sdk](https://github.com/mento-protocol/mento-sdk) v3, bringing the full power of Mento's onchain FX protocol to your terminal. Inspect tokens, discover routes, get quotes, and execute swaps — all without leaving the command line.
 
 ## Overview
