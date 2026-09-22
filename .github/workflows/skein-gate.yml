@@ -11,6 +11,9 @@ concurrency:
   group: skein-gate-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   gate:
     runs-on: ubuntu-latest
@@ -18,13 +21,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 24
       - run: npm ci --prefer-offline --no-audit --no-fund
       - name: task gate (pull request)
         if: github.event_name == 'pull_request'
-        run: scripts/skein/skein gate --from-branch --only brief,boundary,secrets,test-integrity,invariants,standard
+        run: scripts/skein/skein gate --from-branch --only brief,boundary,secrets,test-integrity,invariants,standard,accept
       - name: standard (main)
         if: github.event_name == 'push'
         run: scripts/skein/skein gate --standard-only
