@@ -1,0 +1,13 @@
+{
+  // Typecheck-only project: covers src/ and tests/ together.
+  // It lives under tests/ because CLI-00 owns `tests/**` but not a new root file.
+  // `npm run build` and `prepack` keep using the root tsconfig.json, so dist/
+  // is still emitted from src/ alone and contains no tests.
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "..",
+    "noEmit": true,
+    "declaration": false
+  },
+  "include": ["../src/**/*", "../tests/**/*", "../vitest.config.ts"]
+}
