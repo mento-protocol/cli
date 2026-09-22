@@ -19,7 +19,8 @@
   "maxAgents": 6,
   "install": "npm ci --prefer-offline --no-audit --no-fund",
   "standard": [
-    "npm run build"
+    "npm run typecheck",
+    "npm test"
   ],
   "e2e": [],
   "invariants": [],
