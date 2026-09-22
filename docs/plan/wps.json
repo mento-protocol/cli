@@ -7,7 +7,8 @@
     "`brief: null` means NOT DISPATCHABLE. Write docs/plan/briefs/<id>.md first (the /skein-brief skill), then set the path here.",
     "Keep `owned` globs disjoint between tasks that run at the same time; `skein plan` prints overlaps.",
     "money: true and pii: true make a cross-model review mandatory before merge. `done: true` is set by skein merge.",
-    "This repo is the team's sandbox for running several coordinators at once. CLI-00 is briefed and dispatchable; CLI-01 and CLI-02 are deliberately unbriefed so a new coordinator's first act is to brief one."
+    "This repo is the team's sandbox for running several coordinators at once. CLI-00 is briefed and dispatchable; CLI-01 and CLI-02 are deliberately unbriefed so a new coordinator's first act is to brief one.",
+    "Tasks CLI-03..CLI-06 are SUGGESTED FEATURES for the team exercise (docs/plan/TRY-IT.md): pick one, brief it with your coordinator, build it. Edit or replace them freely."
   ],
   "modelPolicy": {
     "principle": "The defects that matter are found by cross-model review, whichever model wrote the code. The reviewer is where model strength has the most leverage.",
@@ -23,7 +24,10 @@
     ".superset/**",
     "bin/**"
   ],
-  "alwaysAllowed": ["package-lock.json", "docs/adr/DRAFT-*.md"],
+  "alwaysAllowed": [
+    "package-lock.json",
+    "docs/adr/DRAFT-*.md"
+  ],
   "tasks": [
     {
       "id": "CLI-00",
@@ -32,8 +36,17 @@
       "slug": "test-harness",
       "deps": [],
       "tier": "default",
-      "owned": ["package.json", "tsconfig.json", "vitest.config.ts", "tests/**", ".gitignore"],
-      "accept": ["npm run typecheck", "npm test"],
+      "owned": [
+        "package.json",
+        "tsconfig.json",
+        "vitest.config.ts",
+        "tests/**",
+        ".gitignore"
+      ],
+      "accept": [
+        "npm run typecheck",
+        "npm test"
+      ],
       "needs": [],
       "brief": "docs/plan/briefs/CLI-00.md",
       "notes": "Phase 0. package.json has only build/dev/prepack, so .skein/config.json standard is `npm run build` until this merges; the coordinator then sets standard to typecheck + test. No product behaviour changes."
@@ -45,8 +58,12 @@
       "slug": "readme-install",
       "deps": [],
       "tier": "mechanical",
-      "owned": ["README.md"],
-      "accept": ["npm run build"],
+      "owned": [
+        "README.md"
+      ],
+      "accept": [
+        "npm run build"
+      ],
       "needs": [],
       "brief": null,
       "notes": "README.md still says `git clone .../mento-cli.git` and the package was renamed to @mento-protocol/cli in #6. Small, docs-only, no deps: a good first brief for a new coordinator. Check every command block against src/commands while there."
@@ -56,13 +73,81 @@
       "title": "parseAmount rejects malformed amounts with a clear error",
       "type": "fix",
       "slug": "parse-amount-validation",
-      "deps": ["CLI-00"],
+      "deps": [
+        "CLI-00"
+      ],
       "tier": "default",
-      "owned": ["src/lib/format.ts", "tests/format.test.ts"],
-      "accept": ["npm test -- tests/format.test.ts"],
+      "owned": [
+        "src/lib/format.ts",
+        "tests/format.test.ts"
+      ],
+      "accept": [
+        "npm test -- tests/format.test.ts"
+      ],
       "needs": [],
       "brief": null,
       "notes": "src/lib/format.ts parseAmount splits on '.' and calls BigInt(): `1e3`, `abc`, `-1`, `1.2.3` and an empty string either throw a raw SyntaxError (handleError prints it verbatim) or silently produce a wrong bigint. Needs CLI-00's test runner. Pure module, no network: a good second brief."
+    },
+    {
+      "id": "CLI-03",
+      "title": "`mento balances <address>`: stable and collateral balances for an address",
+      "type": "feat",
+      "slug": "balances",
+      "deps": [
+        "CLI-00"
+      ],
+      "tier": "default",
+      "owned": [],
+      "accept": [],
+      "needs": [],
+      "brief": null,
+      "notes": "Suggested feature. New command under src/commands/, registered in src/index.ts (coordinator grants that line). Reads only: SDK token lists plus ERC-20 balanceOf via viem. Supports --json. No wallet, no key. Tests mock the SDK and the chain client."
+    },
+    {
+      "id": "CLI-04",
+      "title": "`mento quote --all-routes`: compare every route for a pair, best first",
+      "type": "feat",
+      "slug": "quote-all-routes",
+      "deps": [
+        "CLI-00"
+      ],
+      "tier": "default",
+      "owned": [],
+      "accept": [],
+      "needs": [],
+      "brief": null,
+      "notes": "Suggested feature. src/commands/quote.ts today quotes one route; the SDK can enumerate routes for a pair. Show amountOut per route, best first, and keep the default single-route output unchanged. --json emits an array. Read-only."
+    },
+    {
+      "id": "CLI-05",
+      "title": "`--output csv` for tokens, pools and routes",
+      "type": "feat",
+      "slug": "csv-output",
+      "deps": [
+        "CLI-00"
+      ],
+      "tier": "default",
+      "owned": [],
+      "accept": [],
+      "needs": [],
+      "brief": null,
+      "notes": "Suggested feature. src/lib/format.ts `output()` renders a table or JSON; add csv with the same rows and headers (RFC 4180 quoting). Global option beside --json in src/index.ts. Pure formatting, unit-testable without the network."
+    },
+    {
+      "id": "CLI-06",
+      "title": "Structured errors: `--json` failures emit one JSON object on stderr with a stable code",
+      "type": "fix",
+      "slug": "json-errors",
+      "deps": [
+        "CLI-00"
+      ],
+      "tier": "default",
+      "owned": [],
+      "accept": [],
+      "needs": [],
+      "brief": null,
+      "notes": "Suggested feature. src/lib/errors.ts handleError prints prose and exits 1 for every class. With --json, emit {code, message, hint} on stderr, exit codes per class (2 usage, 3 network, 4 chain, 1 other). AGENTS.md P5: stdout stays exactly one JSON document.",
+      "money": false
     }
   ]
 }
