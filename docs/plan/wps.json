@@ -49,7 +49,8 @@
       ],
       "needs": [],
       "brief": "docs/plan/briefs/CLI-00.md",
-      "notes": "Phase 0. package.json has only build/dev/prepack, so .skein/config.json standard is `npm run build` until this merges; the coordinator then sets standard to typecheck + test. No product behaviour changes."
+      "notes": "Phase 0. package.json has only build/dev/prepack, so .skein/config.json standard is `npm run build` until this merges; the coordinator then sets standard to typecheck + test. No product behaviour changes.",
+      "done": true
     },
     {
       "id": "CLI-01",
