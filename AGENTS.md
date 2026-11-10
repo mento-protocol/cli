@@ -74,6 +74,11 @@ and nothing else; progress and warnings go to `stderr`. Human-readable output ma
 JSON field names may not without the brief saying so.
 
 
+## Code ownership
+
+This codebase is yours: what it's for and how it's built are your call, and you'll keep building on it.
+Ownership covers design and cleanup, not authority: approval rules, scope sign-off, review and no-merge rules still apply. Keep related fixes in separate commits and list them in the PR body.
+
 ## Workflow
 1. Read the brief and everything it lists under "Read first".
 2. Work in small conventional commits (`feat(scope): …`, `fix(scope): …`, `test(scope): …`)
